@@ -90,6 +90,17 @@ public class UserController {
 		req.setAttribute("user",user);
 		req.getRequestDispatcher("jsp/updatepwd.jsp").forward(req, resp);
 	}
+	@RequestMapping("/updatepassword")
+	public void updatepassword(User user1,HttpServletRequest req,HttpServletResponse resp) throws Exception {
+		System.out.println(user1);
+		Service.updateUser(user1);
+		//通过id查出该用户
+		User user = Service.selectById(user1.getId());
+		req.setAttribute("user",user);
+		req.getRequestDispatcher("index.jsp").forward(req, resp);
+	}
+	
+	
 	/**
 	 * @修改头像
 	 * @param id
@@ -106,19 +117,18 @@ public class UserController {
 	}
 	@RequestMapping("/upload")
 	public void upload2(MultipartFile image_file,HttpServletRequest req,HttpServletResponse resp) throws Exception {
-	    String url = FtpUtil.upload(image_file.getInputStream(), image_file.getOriginalFilename());
-	    System.out.println(url);//url
+	    
+		//头像上传到服务器
+		String url = FtpUtil.upload(image_file.getInputStream(), image_file.getOriginalFilename());
 	    System.out.println(req.getParameter("id"));
 		
 	    User user = new User();
 	    user.setImgurl(url);
 	    user.setId(Integer.valueOf(req.getParameter("id")));
 	    Service.updateUser(user);
-		
+	
 	    User user1 = Service.selectById(Integer.valueOf(req.getParameter("id")));
 		req.setAttribute("user", user1);
-		req.getRequestDispatcher("jsp/personalspace.jsp").forward(req, resp);
-//		
-		
+		req.getRequestDispatcher("jsp/personalspace.jsp").forward(req, resp);			
 	}
 }
